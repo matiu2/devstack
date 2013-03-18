@@ -326,7 +326,7 @@ create_nova_accounts() {
     ADMIN_ROLE=$(keystone role-list | awk "/ admin / { print \$2 }")
 
     # Nova
-    if [[ "$ENABLED_SERVICES" =~ "n-api" ]]; then
+    if [[ "$ENABLED_SERVICES" =~ "n-cpu" || "$MULTI_HOST" == "True" ]]; then
         NOVA_USER=$(keystone user-create \
             --name=nova \
             --pass="$SERVICE_PASSWORD" \
