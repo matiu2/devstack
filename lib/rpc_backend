@@ -118,6 +118,7 @@ function restart_rpc_backend() {
         fi
         # change the rabbit password since the default is "guest"
         sudo rabbitmqctl change_password guest $RABBIT_PASSWORD
+        sudo iptables -A INPUT -p tcp -m tcp --dport 5672 -j ACCEPT
     elif is_service_enabled qpid; then
         echo_summary "Starting qpid"
         restart_service qpidd
