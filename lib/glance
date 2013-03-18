@@ -186,6 +186,8 @@ function start_glance() {
     if ! timeout $SERVICE_TIMEOUT sh -c "while ! http_proxy= wget -q -O- http://$GLANCE_HOSTPORT; do sleep 1; done"; then
       die $LINENO "g-api did not start"
     fi
+
+    sudo iptables -A INPUT -p tcp -m tcp --dport 9292 -j ACCEPT
 }
 
 # stop_glance() - Stop running processes
@@ -193,6 +195,7 @@ function stop_glance() {
     # Kill the Glance screen windows
     screen -S $SCREEN_NAME -p g-api -X kill
     screen -S $SCREEN_NAME -p g-reg -X kill
+    sudo iptables -D INPUT -p tcp -m tcp --dport 9292 -j ACCEPT
 }
 
 # Restore xtrace

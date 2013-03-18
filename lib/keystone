@@ -323,6 +323,9 @@ function start_keystone() {
 
     # Start Keystone in a screen window
     screen_it key "cd $KEYSTONE_DIR && $KEYSTONE_DIR/bin/keystone-all --config-file $KEYSTONE_CONF $KEYSTONE_LOG_CONFIG -d --debug"
+
+    sudo iptables -A INPUT -p tcp -m tcp --dport $KEYSTONE_AUTH_PORT -j ACCEPT
+
     echo "Waiting for keystone to start..."
     if ! timeout $SERVICE_TIMEOUT sh -c "while ! http_proxy= curl -s http://$SERVICE_HOST:$service_port/v2.0/ >/dev/null; do sleep 1; done"; then
       die $LINENO "keystone did not start"
@@ -339,6 +342,7 @@ function start_keystone() {
 function stop_keystone() {
     # Kill the Keystone screen window
     screen -S $SCREEN_NAME -p key -X kill
+    sudo iptables -D INPUT -p tcp -m tcp --dport $KEYSTONE_AUTH_PORT -j ACCEPT
 }
 
 # Restore xtrace
