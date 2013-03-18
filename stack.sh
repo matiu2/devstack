@@ -1212,6 +1212,17 @@ if is_service_enabled nova && is_service_enabled key; then
     $TOP_DIR/tools/create_userrc.sh -PA --target-dir $TOP_DIR/accrc
 fi
 
+# Run cell commands
+# =======================
+
+# Create cells in DB etc.
+
+if is_service_enabled mysql && is_service_enabled n-cell; then
+    for cmd in "${CELL_CMDS[@]}"
+    do
+        ${cmd}
+    done
+fi
 
 # Install Images
 # ==============
