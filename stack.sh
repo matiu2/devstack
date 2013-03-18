@@ -1023,6 +1023,19 @@ if is_service_enabled nova; then
     iniset_rpc_backend nova $NOVA_CONF DEFAULT
     iniset $NOVA_CONF DEFAULT glance_api_servers "$GLANCE_HOSTPORT"
 
+    # Cells
+    # -----
+    
+    if is_service_enabled n-cell; then
+        CELL_NAME=${CELL_NAME:-cell}
+        echo_summary "Configuring Nova for cells"
+        iniset $NOVA_CONF cells_enabled "True"
+        iniset $NOVA_CONF cell_name "$CELL_NAME"
+        iniset $NOVA_CONF compute_api_class "nova.compute.cells_api.ComputeCellsAPI"
+        iniset $NOVA_CONF cell_instance_update_num_instances 100
+        iniset $NOVA_CONF cell_instance_updated_at_threshold 86400
+        iniset $NOVA_CONF cell_scheduler_filters "nova.cells.filters.target_cell.RAXTargetCellFilter"
+    fi
 
     # XenServer
     # ---------
@@ -1129,6 +1142,11 @@ screen_it zeromq "cd $NOVA_DIR && $NOVA_BIN_DIR/nova-rpc-zmq-receiver"
 if is_service_enabled n-api; then
     echo_summary "Starting Nova API"
     start_nova_api
+fi
+
+if is_service_enabled n-cell; then
+    echo_summary "Starting Nova Cells"
+    screen_it n-cell "cd $NOVA_DIR && $NOVA_BIN_DIR/nova-cells"
 fi
 
 if is_service_enabled q-svc; then
