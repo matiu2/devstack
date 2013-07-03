@@ -1029,12 +1029,12 @@ if is_service_enabled nova; then
     if is_service_enabled n-cell; then
         CELL_NAME=${CELL_NAME:-cell}
         echo_summary "Configuring Nova for cells"
-        iniset $NOVA_CONF cells_enabled "True"
-        iniset $NOVA_CONF cell_name "$CELL_NAME"
-        iniset $NOVA_CONF compute_api_class "nova.compute.cells_api.ComputeCellsAPI"
-        iniset $NOVA_CONF cell_instance_update_num_instances 100
-        iniset $NOVA_CONF cell_instance_updated_at_threshold 86400
-        iniset $NOVA_CONF cell_scheduler_filters "nova.cells.filters.target_cell.RAXTargetCellFilter"
+        iniset $NOVA_CONF DEFAULT compute_api_class "nova.compute.cells_api.ComputeCellsAPI"
+        iniset $NOVA_CONF DEFAULT cell_instance_update_num_instances 100
+        iniset $NOVA_CONF DEFAULT cell_instance_updated_at_threshold 86400
+        iniset $NOVA_CONF DEFAULT cell_scheduler_filters "nova.cells.filters.target_cell.RAXTargetCellFilter"
+        iniset $NOVA_CONF cells cells_enabled "True"
+        iniset $NOVA_CONF cells cell_name "$CELL_NAME"
     fi
 
     # XenServer
